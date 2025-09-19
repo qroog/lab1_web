@@ -55,3 +55,39 @@ header {
 .logo span {
   color: var(--orange);
 }
+
+.products-section{padding:2rem 0}
+.section-title{text-align:center;margin-bottom:2rem;font-size:2rem}
+
+.products-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:2rem;
+}
+
+.product-card{
+  background:var(--dark-card);
+  border:1px solid var(--gray-light);
+  border-radius:var(--border-radius);
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:var(--transition);
+}
+.product-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 12px 20px rgba(0,0,0,.4);
+  border-color:var(--orange-light);
+}
+
+.product-image{
+  width:100%;height:270px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(45deg,var(--dark-card),var(--orange-dark));
+  color:#fff;font-weight:bold;
+}
+
+.product-info{padding:1.5rem;flex-grow:1;display:flex;flex-direction:column}
+.product-title{font-size:1.2rem;margin-bottom:.5rem}
+.product-description{color:var(--gray);margin-bottom:1rem;flex-grow:1}
+.product-price{font-size:1.4rem;font-weight:bold;color:var(--orange);margin-bottom:1rem}

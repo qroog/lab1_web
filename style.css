@@ -174,3 +174,47 @@ header {
 }
 
 .add-to-cart{padding:.7rem}
+
+dialog{
+  border:none;border-radius:var(--border-radius);
+  width:90%;max-width:500px;
+  background:var(--dark-card);color:var(--dark-text);
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 15px 30px rgba(0,0,0,.5);
+  transition:opacity .3s ease,transform .3s ease;
+  opacity:0;
+}
+dialog[open]{opacity:1}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+
+.modal-content{padding:2rem;position:relative}
+.close-modal{
+  position:absolute;top:1rem;right:1rem;
+  background:none;border:none;font-size:1.5rem;
+  cursor:pointer;color:var(--gray);
+  transition:var(--transition);
+}
+.close-modal:hover{color:var(--orange)}
+
+#order-modal h2{margin-bottom:1.5rem}
+.form-group{margin-bottom:1.2rem}
+.form-label{display:block;margin-bottom:.5rem;font-weight:500}
+.form-input{
+  width:100%;padding:.75rem;
+  border:1px solid var(--gray-light);
+  border-radius:4px;font-size:1rem;
+  background:var(--dark-bg);color:var(--dark-text);
+}
+.form-input:focus{
+  outline:none;border-color:var(--orange);
+  box-shadow:0 0 0 2px rgba(255,119,0,.2);
+}
+
+.submit-order{width:100%;background:var(--success);color:#fff;border:none;padding:1rem;margin-top:1rem}
+.submit-order:hover{background:#27ae60}
+
+.order-success{text-align:center;padding:2rem}
+.success-icon{font-size:4rem;color:var(--success);margin-bottom:1rem}
+.order-success h2{margin-bottom:1rem}
+.order-success p{color:var(--gray)}

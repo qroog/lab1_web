@@ -218,3 +218,14 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .success-icon{font-size:4rem;color:var(--success);margin-bottom:1rem}
 .order-success h2{margin-bottom:1rem}
 .order-success p{color:var(--gray)}
+
+@media(max-width:768px){
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5rem}
+  .cart-dropdown{width:300px;right:10px}
+}
+
+@media(max-width:576px){
+  .products-grid{grid-template-columns:1fr}
+  .cart-dropdown{width:calc(100% - 30px)}
+  .modal-content{padding:1.5rem}
+}

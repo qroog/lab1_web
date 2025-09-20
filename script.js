@@ -116,3 +116,25 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProducts();
   renderCart();
 });
+
+
+// DOM-элементы
+const checkoutBtn = document.getElementById('checkout-btn');
+const orderModal = document.getElementById('order-modal');
+const successModal = document.getElementById('success-modal');
+const closeModal = document.getElementById('close-modal');
+const orderForm = document.getElementById('order-form');
+
+// Оформление заказа
+checkoutBtn.addEventListener('click', () => cart.length ? orderModal.showModal() : alert('Корзина пуста'));
+closeModal.addEventListener('click', () => orderModal.close());
+
+orderForm.addEventListener('submit', e => {
+  e.preventDefault();
+  orderModal.close();
+  successModal.showModal();
+  cart = [];
+  saveCart();
+  renderCart();
+  setTimeout(() => successModal.close(), 3000);
+});

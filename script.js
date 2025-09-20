@@ -17,7 +17,7 @@ const formatPrice = p => new Intl.NumberFormat('ru-RU').format(p) + ' ₽';
 function renderProducts() {
   productsContainer.innerHTML = products.map(p => `
     <div class="product-card">
-      <div class="product-image">Изображение ${p.name}</div>
+      <div class="product-image"><img src="${p.image}" alt="${p.name}" /></div>
       <div class="product-info">
         <h3 class="product-title">${p.name}</h3>
         <p class="product-description">${p.description}</p>

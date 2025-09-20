@@ -28,13 +28,8 @@ function renderProducts() {
   `).join('');
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-  renderProducts();
-});
-
 // Состояние
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('simracing_cart')) || [];
 let isCartOpen = false;
 
 // DOM-элементы
@@ -43,6 +38,9 @@ const cartItems = document.getElementById('cart-items');
 const cartTotal = document.getElementById('cart-total');
 const cartCount = document.getElementById('cart-count');
 const cartBtn = document.getElementById('cart-btn');
+
+// Сохранение корзины
+const saveCart = () => localStorage.setItem('simracing_cart', JSON.stringify(cart));
 
 // Переключение корзины
 function toggleCart(open) {
@@ -86,6 +84,7 @@ function renderCart() {
 function addToCart(id) {
   const item = cart.find(i => i.id === id);
   item ? item.quantity++ : cart.push({ ...products.find(p => p.id === id), quantity: 1 });
+  saveCart();
   renderCart();
   toggleCart(true);
 }
@@ -96,6 +95,7 @@ function changeQuantity(id, delta) {
   if (!item) return;
   item.quantity += delta;
   if (item.quantity <= 0) cart = cart.filter(i => i.id !== id);
+  saveCart();
   renderCart();
 }
 
@@ -109,4 +109,10 @@ document.addEventListener('click', e => {
   if (e.target.classList.contains('remove-item')) return changeQuantity(id, -999);
 
   if (e.target === cartBtn) return toggleCart(!isCartOpen);
+});
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+  renderProducts();
+  renderCart();
 });

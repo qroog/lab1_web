@@ -109,6 +109,8 @@ document.addEventListener('click', e => {
   if (e.target.classList.contains('remove-item')) return changeQuantity(id, -999);
 
   if (e.target === cartBtn) return toggleCart(!isCartOpen);
+  
+  if (!cartDropdown.contains(e.target) && !cartBtn.contains(e.target)) toggleCart(false);
 });
 
 // Инициализация

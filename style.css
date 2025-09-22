@@ -241,3 +241,5 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 ::-webkit-scrollbar-track{background:var(--dark-bg)}
 ::-webkit-scrollbar-thumb{background:var(--orange);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:var(--orange-dark)}
+
+/*...*/

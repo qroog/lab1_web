@@ -1,52 +1,68 @@
-const products = [
-  { id: 1, name: "Moza R3", price: 24990, description: "FFB Руль", image: "Images/Moza_R3.WebP" },
-  { id: 2, name: "Moza R5", price: 39990, description: "FFB Руль", image: "Images/Moza_R5.WebP" },
-  { id: 3, name: "Moza R12", price: 45990, description: "FFB база", image: "Images/Moza_R12.WebP" },
-  { id: 4, name: "Simagic Sequential Shifter", price: 20990, description: "Секвентальный шифтер", image: "Images/Q1S.WebP" },
-  { id: 5, name: "Simagic GT1-D Wheel", price: 31990, description: "Рулевое колесо", image: "Images/Wheel.WebP" },
-  { id: 6, name: "Simagic P1000 Hydraulic Pedals", price: 57990, description: "Педали с обратной связью", image: "Images/Pedals.WebP" }
-];
-
 // DOM-элементы
 const productsContainer = document.getElementById('products-container');
-
-// Формат цены
-const formatPrice = p => new Intl.NumberFormat('ru-RU').format(p) + ' ₽';
-
-// Рендер товаров
-function renderProducts() {
-  productsContainer.innerHTML = products.map(p => `
-    <div class="product-card">
-      <div class="product-image"><img src="${p.image}" alt="${p.name}" /></div>
-      <div class="product-info">
-        <h3 class="product-title">${p.name}</h3>
-        <p class="product-description">${p.description}</p>
-        <div class="product-price">${formatPrice(p.price)}</div>
-        <button class="add-to-cart" data-id="${p.id}">Добавить в корзину</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// Состояние
-let cart = JSON.parse(localStorage.getItem('simracing_cart')) || [];
-let isCartOpen = false;
-
-// DOM-элементы
 const cartDropdown = document.getElementById('cart-dropdown');
 const cartItems = document.getElementById('cart-items');
 const cartTotal = document.getElementById('cart-total');
 const cartCount = document.getElementById('cart-count');
 const cartBtn = document.getElementById('cart-btn');
+const checkoutBtn = document.getElementById('checkout-btn');
+const orderModal = document.getElementById('order-modal');
+const successModal = document.getElementById('success-modal');
+const closeModal = document.getElementById('close-modal');
+const orderForm = document.getElementById('order-form');
 
-// Сохранение корзины
-const saveCart = () => localStorage.setItem('simracing_cart', JSON.stringify(cart));
+// Состояние
+let cart = JSON.parse(localStorage.getItem('simracing_cart')) || [];
+let isCartOpen = false;
 
-// Переключение корзины
-function toggleCart(open) {
-  cartDropdown.classList.toggle('active', open);
-  cartBtn.setAttribute('aria-expanded', open);
-  isCartOpen = open;
+const formatPrice = p => new Intl.NumberFormat('ru-RU').format(p) + ' ₽';
+
+// Обновление корзины 
+function updateCart() {
+  localStorage.setItem('simracing_cart', JSON.stringify(cart));
+  renderCart();
+}
+
+// Создание элементов
+function createProductCard(product) {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.innerHTML = `
+    <div class="product-image"><img src="${product.image}" alt="${product.name}" /></div>
+    <div class="product-info">
+      <h3 class="product-title">${product.name}</h3>
+      <p class="product-description">${product.description}</p>
+      <div class="product-price">${formatPrice(product.price)}</div>
+      <button class="add-to-cart" data-id="${product.id}">Добавить в корзину</button>
+    </div>
+  `;
+  return card;
+}
+
+function createCartItem(item) {
+  const cartItem = document.createElement('div');
+  cartItem.className = 'cart-item';
+  cartItem.innerHTML = `
+    <div class="cart-item-info">
+      <div class="cart-item-title">${item.name}</div>
+      <div class="cart-item-price">${formatPrice(item.price)}</div>
+    </div>
+    <div class="cart-item-quantity">
+      <button class="quantity-btn minus" data-id="${item.id}">-</button>
+      <span>${item.quantity}</span>
+      <button class="quantity-btn plus" data-id="${item.id}">+</button>
+    </div>
+    <button class="remove-item" data-id="${item.id}">×</button>
+  `;
+  return cartItem;
+}
+
+// Рендер товаров
+function renderProducts() {
+  productsContainer.innerHTML = '';
+  products.forEach(product => {
+    productsContainer.appendChild(createProductCard(product));
+  });
 }
 
 // Корзина
@@ -60,32 +76,34 @@ function renderCart() {
     cartCount.style.display = 'none';
   }
 
-  cartItems.innerHTML = cart.length
-    ? cart.map(i => `
-        <div class="cart-item">
-          <div class="cart-item-info">
-            <div class="cart-item-title">${i.name}</div>
-            <div class="cart-item-price">${formatPrice(i.price)}</div>
-          </div>
-          <div class="cart-item-quantity">
-            <button class="quantity-btn minus" data-id="${i.id}">-</button>
-            <span>${i.quantity}</span>
-            <button class="quantity-btn plus" data-id="${i.id}">+</button>
-          </div>
-          <button class="remove-item" data-id="${i.id}">×</button>
-        </div>
-      `).join('')
-    : '<div class="empty-cart">Ваша корзина пуста</div>';
+  cartItems.innerHTML = '';
+  
+  if (cart.length > 0) {
+    cart.forEach(item => {
+      cartItems.appendChild(createCartItem(item));
+    });
+  } else {
+    const emptyCart = document.createElement('div');
+    emptyCart.className = 'empty-cart';
+    emptyCart.textContent = 'Ваша корзина пуста';
+    cartItems.appendChild(emptyCart);
+  }
 
   cartTotal.textContent = formatPrice(cart.reduce((s, i) => s + i.price * i.quantity, 0));
+}
+
+// Переключение корзины
+function toggleCart(open) {
+  cartDropdown.classList.toggle('active', open);
+  cartBtn.setAttribute('aria-expanded', open);
+  isCartOpen = open;
 }
 
 // Добавление товара
 function addToCart(id) {
   const item = cart.find(i => i.id === id);
   item ? item.quantity++ : cart.push({ ...products.find(p => p.id === id), quantity: 1 });
-  saveCart();
-  renderCart();
+  updateCart(); 
   toggleCart(true);
 }
 
@@ -95,12 +113,11 @@ function changeQuantity(id, delta) {
   if (!item) return;
   item.quantity += delta;
   if (item.quantity <= 0) cart = cart.filter(i => i.id !== id);
-  saveCart();
-  renderCart();
+  updateCart(); 
 }
 
-// Клик
-document.addEventListener('click', e => {
+// Обработка кликов
+function handleDocumentClick(e) {
   const id = +e.target.dataset.id;
 
   if (e.target.classList.contains('add-to-cart')) return addToCart(id);
@@ -111,32 +128,30 @@ document.addEventListener('click', e => {
   if (e.target === cartBtn) return toggleCart(!isCartOpen);
   
   if (!cartDropdown.contains(e.target) && !cartBtn.contains(e.target)) toggleCart(false);
-});
-
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-  renderProducts();
-  renderCart();
-});
-
-
-// DOM-элементы
-const checkoutBtn = document.getElementById('checkout-btn');
-const orderModal = document.getElementById('order-modal');
-const successModal = document.getElementById('success-modal');
-const closeModal = document.getElementById('close-modal');
-const orderForm = document.getElementById('order-form');
+}
 
 // Оформление заказа
-checkoutBtn.addEventListener('click', () => cart.length ? orderModal.showModal() : alert('Корзина пуста'));
-closeModal.addEventListener('click', () => orderModal.close());
+function handleCheckout() {
+  cart.length ? orderModal.showModal() : alert('Корзина пуста');
+}
 
-orderForm.addEventListener('submit', e => {
+function handleOrderSubmit(e) {
   e.preventDefault();
   orderModal.close();
   successModal.showModal();
   cart = [];
-  saveCart();
-  renderCart();
+  updateCart();
   setTimeout(() => successModal.close(), 3000);
-});
+}
+
+function init() {
+  renderProducts();
+  renderCart();
+  
+  document.addEventListener('click', handleDocumentClick);
+  checkoutBtn.addEventListener('click', handleCheckout);
+  closeModal.addEventListener('click', () => orderModal.close());
+  orderForm.addEventListener('submit', handleOrderSubmit);
+}
+
+document.addEventListener('DOMContentLoaded', init);
